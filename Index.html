@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ADUSTECH Student Portal</title>
+  <style>
+    :root {
+      --primary: #006633; /* ADUSTECH Green */
+      --primary-dark: #004d26;
+      --accent: #f4b400;  /* Gold accent */
+      --bg: #f4f6f8;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --text-muted: #666666;
+      --border: #e0e0e0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Navigation Bar */
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-badge {
+      background-color: var(--accent);
+      color: var(--primary-dark);
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+
+    nav {
+      display: flex;
+      gap: 10px;
+    }
+
+    nav button {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    nav button:hover, nav button.active {
+      background-color: var(--primary-dark);
+      border-color: var(--accent);
+    }
+
+    /* Container Structure */
+    main {
+      flex: 1;
+      padding: 1.5rem;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Card Component */
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    /* Login Page */
+    .login-container {
+      max-width: 400px;
+      margin: 3rem auto;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+    }
+
+    /* Dashboard Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      padding: 1.2rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .stat-card h4 {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-card .value {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    /* Tables */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background-color: #e9ecef;
+      color: var(--text);
+    }
+
+    /* Mobile Tweaks */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+      }
+
+      nav button {
+        flex: 1 1 40%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header (Hidden on Login View) -->
+  <header id="app-header" style="display: none;">
+    <div class="logo-container">
+      <span class="logo-badge">ADUSTECH</span>
+      <span style="font-weight: 600;">Student Portal</span>
+    </div>
+    <nav>
+      <button onclick="showPage('dashboard')" id="nav-dashboard">Dashboard</button>
+      <button onclick="showPage('registration')" id="nav-registration">Registration</button>
+      <button onclick="showPage('result')" id="nav-result">Result</button>
+      <button onclick="showPage('profile')" id="nav-profile">Profile</button>
+      <button onclick="logout()" style="border-color: #ff4d4d; color: #ff4d4d;">Logout</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- LOGIN PAGE -->
+    <div id="login-page" class="page active">
+      <div class="card login-container">
+        <h2 style="text-align: center;">ADUSTECH Portal</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Enter your credentials to access your account</p>
+        
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="reg-no">Registration Number</label>
+            <input type="text" id="reg-no" placeholder=" UG25/COMS/FACMS/1001" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="alkibawyjr" required />
+          </div>
+          <button type="submit" class="btn">Login</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboard-page" class="page">
+      <h2>Dashboard</h2>
+      <div class="dashboard-grid">
+        <div class="stat-card">
+          <h4>CURRENT CGPA</h4>
+          <div class="value">4.25</div>
+        </div>
+        <div class="stat-card">
+          <h4>REGISTERED UNITS</h4>
+          <div class="value">21 Units</div>
+        </div>
+        <div class="stat-card">
+          <h4>LEVEL</h4>
+          <div class="value">100 Level</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Announcements</h3>
+        <p style="margin-top: 0.5rem; color: var(--text-muted);">Course registration for the current semester closes on Friday. Ensure all registrations are submitted and verified by your level coordinator.</p>
+      </div>
+    </div>
+
+    <!-- COURSE REGISTRATION PAGE -->
+    <div id="registration-page" class="page">
+      <h2>Course Registration</h2>
+      <div class="card">
+        <h3>First Semester Courses</h3>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Select</th>
+                <th>Course Code</th>
+                <th>Course Title</th>
+                <th>Units</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox" checked /></td>
+                <td>CSC 101</td>
+                <td>Data Structures & Algorithms</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" checked /></td>
+                <td>CSC 103</td>
+                <td>Web Application Development</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" checked /></td>
+                <td>PHY 101</td>
+                <td>Classical Mechanics</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td>STA 111</td>
+                <td>Statistical Inference</td>
+                <td>3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn" style="margin-top: 1rem; width: auto;" onclick="alert('Courses Submitted Successfully!')">Submit Registration</button>
+      </div>
+    </div>
+
+    <!-- RESULT PAGE -->
+    <div id="result-page" class="page">
+      <h2>Semester Results</h2>
+      <div class="card">
+        <div class="form-group" style="max-width: 250px;">
+          <label>Select Semester</label>
+          <select>
+            <option>2025/2026 - First Semester</option>
+            <option>2024/2025 - Second Semester</option>
+            <option>2024/2025 - First Semester</option>
+          </select>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Course Code</th>
+                <th>Score</th>
+                <th>Grade</th>
+                <th>Units</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>CSC 101</td>
+                <td>78%</td>
+                <td>A</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>CSC 103</td>
+                <td>65%</td>
+                <td>B</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>MTH 101</td>
+                <td>82%</td>
+                <td>A</td>
+                <td>3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE PAGE -->
+    <div id="profile-page" class="page">
+      <h2>Student Profile</h2>
+      <div class="card">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" value="Alkibawy Jr" readonly />
+        </div>
+        <div class="form-group">
+          <label>Registration Number</label>
+          <input type="text" value="ADU/2026/SCI/0101" readonly />
+        </div>
+        <div class="form-group">
+          <label>Faculty</label>
+          <input type="text" value="Faculty of Computing and Mathematical Sciences" readonly />
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <input type="text" value="Computer Science BSc" readonly />
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      document.getElementById('login-page').classList.remove('active');
+      document.getElementById('app-header').style.display = 'flex';
+      showPage('dashboard');
+    }
+
+    function logout() {
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(page => page.classList.remove('active'));
+      document.getElementById('app-header').style.display = 'none';
+      document.getElementById('login-page').classList.add('active');
+    }
+
+    function showPage(pageId) {
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(page => page.classList.remove('active'));
+
+      const navButtons = document.querySelectorAll('nav button');
+      navButtons.forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(pageId + '-page').classList.add('active');
+      const activeNav = document.getElementById('nav-' + pageId);
+      if (activeNav) activeNav.classList.add('active');
+    }
+  </script>
+</body>
+</html>
